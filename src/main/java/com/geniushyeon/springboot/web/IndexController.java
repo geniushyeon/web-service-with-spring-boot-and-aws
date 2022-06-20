@@ -1,5 +1,8 @@
 package com.geniushyeon.springboot.web;
 
+import javax.servlet.http.HttpSession;
+
+import com.geniushyeon.springboot.config.auth.dto.SessionUser;
 import com.geniushyeon.springboot.service.posts.PostsService;
 import com.geniushyeon.springboot.web.dto.PostsResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -13,10 +16,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class IndexController {
 
     private final PostsService postsService;
+    private final HttpSession httpSession;
 
     @GetMapping("/")
     public String index(Model model) {
         model.addAttribute("posts", postsService.findAllDesc());
+
+        SessionUser user = (SessionUser) httpSession.getAttribute("user");
+
+        if (user != null) {
+            model.addAttribute("username", user.getName());
+        }
         return "index";
     }
 
